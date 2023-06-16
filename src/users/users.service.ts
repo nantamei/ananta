@@ -32,8 +32,6 @@ export class UsersService {
       password: hashedpassword
     });
 
-    // const token = this.jwtService.sign({id: users._id})
-
     const token = {
       accessToken: this.jwtService.sign({id: users._id}),
       refreshToken: this.jwtService.sign({id: users._id})
@@ -76,24 +74,4 @@ export class UsersService {
   async getDataByToken(token: string): Promise <Users> {
     return this.usermodel.findOne({ _id: token }).exec();
   }
-
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
-
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }
