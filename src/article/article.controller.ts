@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Request, UnauthorizedException, Put, UseGuards, Param} from '@nestjs/common';
+import { Controller, Get, Post, Body, Request, UnauthorizedException, Put, Delete, Param} from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Iarticle } from './entities/article.interface';
@@ -29,15 +29,6 @@ export class ArticleController {
     }
   }
 
-  // async updateUser(@Req() req,@Param() updateData: string, @Body() UpdateArticleDto: UpdateArticleDto): Promise<any[]>{
-    //   try{
-  //   const { token } = req.headers.authorization.split(' ')[1];
-  //   const updateUser = await this.articleService.updateByToken(token ,updateData, UpdateArticleDto);
-  //   return updateUser
-  //   }catch(error){
-  //     throw new UnauthorizedException('data invalid') 
-  //   }
-  // }
   @Put('user/article/:id')
   async updateArticle(@Request() req, @Param('id') dataUpdate: string, @Body() updateArticleDto: UpdateArticleDto): Promise<any[]> {
     const token = req.headers.authorization.split(' ')[1];
@@ -46,6 +37,16 @@ export class ArticleController {
       throw new UnauthorizedException('User not authorized to update data');
     }
     return updatedArticle;
+  }
+
+  @Delete('user/article/:id')
+  async deleteArticle(@Param('id') id: string, @Request() req): Promise<any>{ 
+    const token = req.headers.authorization.split(' ')[1];
+    const deleteArticle = await this.articleService.deleteData(token, id)
+    if(!deleteArticle){
+      throw new UnauthorizedException('User not authorized to delete data')
+    }
+    return { message: 'Article deleted successfully'}
   }
 
 

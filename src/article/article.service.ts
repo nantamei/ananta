@@ -19,8 +19,8 @@ export class ArticleService {
     private articleModel: Model<Article>
     ) {}
 
-  async create(token: string, CreateArticleDto: CreateArticleDto): Promise <any | Article> {
-    try{
+async create(token: string, CreateArticleDto: CreateArticleDto): Promise <any | Article>{
+  try{
     const decoded: any = jwt.verify(token, this.secretKey);
     const { id } = decoded;
     const { title, description } = CreateArticleDto;
@@ -37,7 +37,7 @@ export class ArticleService {
   }
 }
 
-async getDataByUserId(token: string): Promise<any | Article[]> {
+async getDataByUserId(token: string): Promise<any | Article[]>{
   const decoded: any = jwt.verify(token, this.secretKey);
   const { id } = decoded;
   try {
@@ -72,38 +72,39 @@ async updateDataArticle(token: string, dataUpdate: string, updateArticleDto: Upd
     }
   }
 }
-// async updateDataArticle(token: string, updateData: string, updateArticleDto: UpdateArticleDto): Promise<any | Article[]> {
-//   const decoded: any = jwt.verify(token, 'ananta123456');
-//   const { id } = decoded;
-//   const updatedArticle = await this.articleModel.findOneAndUpdate({ userId: id}, updateArticleDto, { new: true }).exec();
-//   if (!updatedArticle) {
-//     throw new UnauthorizedException('Article not found');
-//   }const article = updateData
-//   const useArticle = await this.articleModel.find({id: article});
-//   if(!useArticle || useArticle.length == 0){
-//     const updateArticle = await this.articleModel.findByIdAndUpdate(updatedArticle,UpdateArticleDto)
-//     if(!updateArticle){
-//       throw new UnauthorizedException('update gagal')
-//     }else{
-//       return updateArticle
-//     }
-//   }
-// }
 
-
-
-
-
-
-  // findOne(id: number) {
-  //   return `This action returns a #${id} article`;
-  // }
-
-  // update(id: number, updateArticleDto: UpdateArticleDto) {
-  //   return `This action updates a #${id} article`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} article`;
+async deleteData(token: string, id: string): Promise<Article>{
+  try{
+  const decoded: any = jwt.verify(token,this.secretKey);
+  const {id: userId} = decoded;
+  const dArticle = await this.articleModel.find({id, userId}).exec();
+  const delArticle = await this.articleModel.findOne({_id: id}).exec();
+    if (!dArticle) {
+      throw new UnauthorizedException('userId not found');
+    } else if(!delArticle){
+      throw new UnauthorizedException('Article not found');
+    }else{  
+      return this.articleModel.findByIdAndDelete(id,{new:true})
+    }
+  } catch(error){
+    const searchArticle = await this.articleModel.findOne({_id: id }).exec();
+  if(!searchArticle){
+    throw new UnauthorizedException('pastikan token benar');
+  }else{
+    const warning = "maaf token salah"
+    throw new UnauthorizedException(warning);
+  }
+}
+}
   
+  // if(!dArticle){
+  //   throw new UnauthorizedException('article not found')
+  // }
+  // const deleteArticle = await this.articleModel.findByIdAndDelete('id').exec();
+  // if(!deleteArticle){
+  //   throw new UnauthorizedException('User not authorized to delete data')
+  // }
+  // return decoded;
+
+
 }
