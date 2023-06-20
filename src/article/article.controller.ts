@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Request, UnauthorizedException, Put, Delete, Param} from '@nestjs/common';
+import { Controller, Get, Post, Body, Request, UnauthorizedException, Put, Delete, Param, UseGuards} from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { Iarticle } from './entities/article.interface';
@@ -12,37 +12,41 @@ export class ArticleController {
     ) {}
     
   @Post('/article')
+  @UseGuards(AuthGuard)
   async getUserId(@Request() req, @Body() CreateArticleDto: CreateArticleDto): Promise<any>{
-    const token = req.headers.authorization.split(' ')[1];
-    const userData = await this.articleService.create(token, CreateArticleDto)
+    const user = req.user
+    const userData = await this.articleService.create(user, CreateArticleDto)
     return userData;
   }
 
   @Get('/user/article')
+  @UseGuards(AuthGuard)
   async getdatawithuser(@Request() req ): Promise<any>{
     try{
-    const token = req.headers.authorization.split(' ')[1];
-    const userData = await this.articleService.getDataByUserId(token)
-    return userData;
+      const user = req.user
+      const userData = await this.articleService.getDataByUserId(user)
+      return userData;
     }catch(error){
       throw new UnauthorizedException('maaf gagal')
     }
   }
 
   @Put('user/article/:id')
+  @UseGuards(AuthGuard)
   async updateArticle(@Request() req, @Param('id') dataUpdate: string, @Body() updateArticleDto: UpdateArticleDto): Promise<any[]> {
-    const token = req.headers.authorization.split(' ')[1];
-    const updatedArticle = await this.articleService.updateDataArticle(token, dataUpdate, updateArticleDto);
-    if (!token) {
+    const user = req.user
+    const updatedArticle = await this.articleService.updateDataArticle(user, dataUpdate, updateArticleDto);
+    if (!user) {
       throw new UnauthorizedException('User not authorized to update data');
     }
     return updatedArticle;
   }
 
   @Delete('user/article/:id')
+  @UseGuards(AuthGuard)
   async deleteArticle(@Param('id') id: string, @Request() req): Promise<any>{ 
-    const token = req.headers.authorization.split(' ')[1];
-    const deleteArticle = await this.articleService.deleteData(token, id)
+    const user = req.user
+    const deleteArticle = await this.articleService.deleteData(user, id)
     if(!deleteArticle){
       throw new UnauthorizedException('User not authorized to delete data')
     }

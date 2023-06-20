@@ -4,23 +4,36 @@ import { loginUserDto } from './dto/login-user.dto';
 import { registerUserDto } from './dto/register-user.dto';
 import { AuthGuard } from './users.guard';
 
+
+ class ResponseLogin { 
+  token: { accessToken: string, refreshToken : string};
+  user: { email: string, name : string}
+}
+
+class ResponseRegister extends ResponseLogin{}
+
+class ResponseGetUser {
+  name: string;
+  email: string;
+}
+
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/auth/register')
-    register(@Body() registerUserDto: registerUserDto): Promise <{ token: { accessToken: string, refreshToken : string}, user: { email: string, name : string}}> {
+    register(@Body() registerUserDto: registerUserDto): Promise <ResponseRegister> {
     return this.usersService.register(registerUserDto);
   }
 
   @Post('/auth/login')
-    login(@Body() loginUserDto: loginUserDto): Promise <{ token: { accessToken: string, refreshToken : string}, user: { email: string, name : string}}> {
+    login(@Body() loginUserDto: loginUserDto): Promise <ResponseLogin> {
     return this.usersService.login(loginUserDto);
   }
     
   @Get('/auth/user')
   @UseGuards(AuthGuard)
-  async getUserbyToken(@Request() req): Promise<any> {
+  async getUserbyToken(@Request() req): Promise<ResponseGetUser> {
     if (req.user && req.user?.id) {
       const user = await this.usersService.getDataByToken(req.user.id);
       return {

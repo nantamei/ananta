@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Article, articleSchema } from './entities/article.schema';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { userSchema } from 'src/users/entities/user.schema';
 import { UsersModule } from 'src/users/users.module';
 
@@ -19,6 +19,6 @@ import { UsersModule } from 'src/users/users.module';
     MongooseModule.forFeature([{name: Article.name, schema: articleSchema}]),
   ],
   controllers: [ArticleController],
-  providers: [ArticleService]
+  providers: [ArticleService, JwtService]
 })
 export class ArticleModule {}

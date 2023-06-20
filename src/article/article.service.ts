@@ -19,15 +19,13 @@ export class ArticleService {
     private articleModel: Model<Article>
     ) {}
 
-async create(token: string, CreateArticleDto: CreateArticleDto): Promise <any | Article>{
+async create(user: any, CreateArticleDto: CreateArticleDto): Promise <any | Article>{
   try{
-    const decoded: any = jwt.verify(token, this.secretKey);
-    const { id } = decoded;
     const { title, description } = CreateArticleDto;
     const newArticle = new this.articleModel({
       title,
       description,
-      userId: id,
+      userId: user.id,
     })
     const savedArticle = await newArticle.save();
     const responeArticle = await this.articleModel.findById(savedArticle._id).exec();
@@ -37,28 +35,24 @@ async create(token: string, CreateArticleDto: CreateArticleDto): Promise <any | 
   }
 }
 
-async getDataByUserId(token: string): Promise<any | Article[]>{
-  const decoded: any = jwt.verify(token, this.secretKey);
-  const { id } = decoded;
+async getDataByUserId(user: any): Promise<any | Article[]>{
   try {
-    const userArticle = await this.articleModel.find({ userId: id }).exec();
+    const userArticle = await this.articleModel.find({ userId: user.id }).exec();
     return { docs: userArticle };
   } catch (error) {
     throw new UnauthorizedException('data tidak ada');
   }
 }
 
-async updateDataArticle(token: string, dataUpdate: string, updateArticleDto: UpdateArticleDto): Promise<any | Article | boolean>{
+async updateDataArticle(user: any, dataUpdate: string, updateArticleDto: UpdateArticleDto): Promise<any | Article | boolean>{
   try{
-  const decoded: any = jwt.verify(token, this.secretKey);
-  const { id } = decoded;
-  const article = await this.articleModel.find({ userId: id}).exec();
+  const article = await this.articleModel.find({ userId: user.id}).exec();
   const searchArticle = await this.articleModel.findOne({_id: dataUpdate}).exec();
 
     if (!article) {
       throw new UnauthorizedException('artikelId not found');
     } else{
-      const valid = await this.articleModel.findOne({userId: id, _id: dataUpdate})
+      const valid = await this.articleModel.findOne({userId: user.id, _id: dataUpdate})
       if(valid){
         return this.articleModel.findByIdAndUpdate(dataUpdate, updateArticleDto,{new:true})
       }else{
@@ -76,12 +70,10 @@ async updateDataArticle(token: string, dataUpdate: string, updateArticleDto: Upd
   }
 }
 
-async deleteData(token: string, id: string): Promise<Article>{
+async deleteData(user: any, id: string): Promise<Article>{
   try{
-  const decoded: any = jwt.verify(token,this.secretKey);
-  const {id: userId} = decoded;
-  const dArticle = await this.articleModel.find({id, userId}).exec();
-  const delArticle = await this.articleModel.findOne({_id: id}).exec();
+  const dArticle = await this.articleModel.find({ userId: user.id}).exec();
+  const delArticle = await this.articleModel.findOne({_id: id, userId: user.id}).exec();
     if (!dArticle) {
       throw new UnauthorizedException('userId not found');
     } else if(!delArticle){
