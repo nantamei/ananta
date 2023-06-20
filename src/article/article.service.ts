@@ -56,16 +56,19 @@ async updateDataArticle(token: string, dataUpdate: string, updateArticleDto: Upd
   const searchArticle = await this.articleModel.findOne({_id: dataUpdate}).exec();
 
     if (!article) {
-      throw new UnauthorizedException('userId not found');
-    } else if(!searchArticle){
-      throw new UnauthorizedException('Article not found');
-    }else{  
-      return this.articleModel.findByIdAndUpdate(dataUpdate, updateArticleDto,{new:true})
+      throw new UnauthorizedException('artikelId not found');
+    } else{
+      const valid = await this.articleModel.findOne({userId: id, _id: dataUpdate})
+      if(valid){
+        return this.articleModel.findByIdAndUpdate(dataUpdate, updateArticleDto,{new:true})
+      }else{
+      return('maaf anda salah mengambil artikel')  
     }
+  }
   } catch(error){
     const searchArticle = await this.articleModel.findOne({_id: dataUpdate }).exec();
     if(!searchArticle){
-      throw new UnauthorizedException('pastikan token benar');
+      throw new UnauthorizedException('pastikan id benar');
     }else{
       const warning = "maaf token salah"
       throw new UnauthorizedException(warning);
@@ -86,25 +89,15 @@ async deleteData(token: string, id: string): Promise<Article>{
     }else{  
       return this.articleModel.findByIdAndDelete(id,{new:true})
     }
-  } catch(error){
-    const searchArticle = await this.articleModel.findOne({_id: id }).exec();
-  if(!searchArticle){
-    throw new UnauthorizedException('pastikan token benar');
-  }else{
-    const warning = "maaf token salah"
-    throw new UnauthorizedException(warning);
+    } catch(error){
+      const searchArticle = await this.articleModel.findOne({_id: id }).exec();
+    if(!searchArticle){
+      throw new UnauthorizedException('pastikan token benar');
+    }else{
+      const warning = "maaf token salah"
+      throw new UnauthorizedException(warning);
+    }
   }
 }
-}
   
-  // if(!dArticle){
-  //   throw new UnauthorizedException('article not found')
-  // }
-  // const deleteArticle = await this.articleModel.findByIdAndDelete('id').exec();
-  // if(!deleteArticle){
-  //   throw new UnauthorizedException('User not authorized to delete data')
-  // }
-  // return decoded;
-
-
 }

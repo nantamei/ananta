@@ -49,30 +49,4 @@ export class ArticleController {
     return { message: 'Article deleted successfully'}
   }
 
-
-
-
-  // @Get('user/article')
-  // // @UseGuards(AuthGuard)
-  // async getOneArticle(@Req() req: Request): Promise<CreateArticleDto | any> {
-  //   const userId = req['userId'];
-  //   const articles = await this.articleService.findOneByUserId(userId);
-  //   return  {docs: articles} 
-  // }
-  
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.articleService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto) {
-  //   return this.articleService.update(+id, updateArticleDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.articleService.remove(+id);
-  // }
 }
