@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { loginUserDto } from './dto/login-user.dto';
-import { registerUserDto } from './dto/register-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Users } from './entities/user.schema';
 import { JwtService } from '@nestjs/jwt';
@@ -18,7 +18,7 @@ export class UsersService {
     private jwtService: JwtService
   ) {}
 
-  async register(registerUserDto: registerUserDto): Promise <{ token: { accessToken: string, refreshToken : string}, user: { email: string, name : string}}>{
+  async register(registerUserDto: RegisterUserDto): Promise <{ token: { accessToken: string, refreshToken : string}, user: { email: string, name : string}}>{
    const {name, email, password} = registerUserDto;
 
    const regis = await this.usermodel.findOne({email})

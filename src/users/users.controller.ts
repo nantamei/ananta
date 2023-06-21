@@ -1,11 +1,11 @@
 import { UseGuards, Controller, Get, Post, Body, Request, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { loginUserDto } from './dto/login-user.dto';
-import { registerUserDto } from './dto/register-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
 import { AuthGuard } from './users.guard';
 
 
- class ResponseLogin { 
+class ResponseLogin { 
   token: { accessToken: string, refreshToken : string};
   user: { email: string, name : string}
 }
@@ -22,7 +22,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/auth/register')
-    register(@Body() registerUserDto: registerUserDto): Promise <ResponseRegister> {
+    register(@Body() registerUserDto: RegisterUserDto): Promise <ResponseRegister> {
     return this.usersService.register(registerUserDto);
   }
 
@@ -46,8 +46,3 @@ export class UsersController {
   }
 }
   
-  
-  //   async getUserByToken(@Body('token') token: string) {
-  //       const user = await this.usersService.getDataByToken(token);
-  //     return user;
-  // }

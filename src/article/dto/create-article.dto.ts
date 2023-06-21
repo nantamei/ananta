@@ -8,10 +8,6 @@ import { Schema } from '@nestjs/mongoose';
 
 export class CreateArticleDto {
 
-    // @IsNotEmpty()
-    // @IsString()
-    // readonly _id: Types.ObjectId
-
     @IsNotEmpty()
     @IsString()
     readonly title: string;
