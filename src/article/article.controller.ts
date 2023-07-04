@@ -3,6 +3,7 @@ import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { AuthGuard } from 'src/users/users.guard';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { Types } from 'mongoose';
 
 @Controller('users')
 export class ArticleController {
@@ -32,17 +33,17 @@ export class ArticleController {
 
   @Put('user/article/:id')
   @UseGuards(AuthGuard)
-  async updateArticle(@Request() req, @Param('id') dataUpdate: string, @Body() updateArticleDto: UpdateArticleDto): Promise<any[]> {
+  async updateArticle(@Request() req, @Param('id') idArticle: Types.ObjectId, @Body() updateArticleDto: UpdateArticleDto): Promise<any> {
     const user = req.user
-    const updatedArticle = await this.articleService.updateDataArticle(user, dataUpdate, updateArticleDto);
+    const updatedArticle = await this.articleService.updateArticle(user, idArticle, updateArticleDto);
     return updatedArticle;
   }
 
   @Delete('user/article/:id')
   @UseGuards(AuthGuard)
-  async deleteArticle(@Param('id') id: string, @Request() req): Promise<any>{ 
+  async deleteArticle(@Param('id') idArticle: Types.ObjectId , @Request() req): Promise<any>{ 
     const user = req.user
-    const deleteArticle = await this.articleService.deleteData(user, id)
+    const deleteArticle = await this.articleService.deleteData(user, idArticle)
     if(!deleteArticle){
       throw new UnauthorizedException('User not authorized to delete data')
     }

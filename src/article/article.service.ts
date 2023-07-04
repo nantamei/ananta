@@ -5,6 +5,13 @@ import { Article } from './entities/article.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose'
 
+class artcontent{
+  articleadd : {
+    title : String,
+    description : String,
+    userId: Types.ObjectId
+  }
+}
 
 @Injectable()
 export class ArticleService {
@@ -39,50 +46,23 @@ export class ArticleService {
     }
   }
 
-  async updateDataArticle(user: any, dataUpdate: string, updateArticleDto: UpdateArticleDto): Promise<any | Article | boolean>{
-    try{
-    // const article = await this.articleModel.find({ userId: user.id}).exec();
-    const searchArticle = await this.articleModel.findOne({_id: dataUpdate}).exec();
-
-      if (!searchArticle) {
-        throw new UnauthorizedException('artikelId not found');
-      } else{
-        const valid = await this.articleModel.findOne({userId: user.id, _id: dataUpdate})
-        if(valid){
-          return this.articleModel.findByIdAndUpdate(dataUpdate, updateArticleDto,{new:true})
-        }else{
-        return('maaf anda salah mengambil id')  
-      }
+  async updateArticle(user: Types.ObjectId, idArticle: Types.ObjectId, updateArticle: UpdateArticleDto ): Promise<artcontent | string>{
+    const { title, description } = updateArticle
+    const validateArticle = await this.articleModel.findOne({_id : idArticle, by_user: user.id});
+    if(!validateArticle){ 
+      return (`maaf artikel milik anda dengan id = (${idArticle}) tidak di temukan !`)
     }
-    } catch(error){
-      const searchArticle = await this.articleModel.findOne({_id: dataUpdate }).exec();
-      if(!searchArticle){
-        throw new UnauthorizedException('pastikan id benar');
-      }else{
-        throw new UnauthorizedException("maaf token salah");
-      }
+    if(title == "" || description == ""){
+      return "gagal update karena data kosong"
     }
+    return this.articleModel.findByIdAndUpdate(idArticle, UpdateArticleDto, {new:true})
   }
 
-  async deleteData(user: any, id: string): Promise<Article>{
-    try{
-    const dArticle = await this.articleModel.find({ userId: user.id}).exec();
-    const delArticle = await this.articleModel.findOne({_id: id, userId: user.id}).exec();
-      if (!dArticle) {
-        throw new UnauthorizedException('userId not found');
-      } else if(!delArticle){
-        throw new UnauthorizedException('Article not found');
-      }else{  
-        return this.articleModel.findByIdAndDelete(id,{new:true})
-      }
-      } catch(error){
-        const searchArticle = await this.articleModel.findOne({_id: id }).exec();
-      if(!searchArticle){
-        throw new UnauthorizedException('pastikan token benar');
-      }else{
-        const warning = "maaf token salah"
-        throw new UnauthorizedException(warning);
-      }
+  async deleteData(user: Types.ObjectId, idArticle: Types.ObjectId): Promise<string | Article>{
+    const validateDelete = await this.articleModel.findOne({_id : idArticle, by_user: user.id});
+    if(!validateDelete){ 
+      return (`maaf artikel milik anda dengan id = (${idArticle}) tidak di temukan !`)
     }
+    return this.articleModel.findByIdAndDelete(idArticle)
   }
 }
