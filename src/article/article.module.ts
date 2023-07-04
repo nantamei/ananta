@@ -4,10 +4,7 @@ import { ArticleController } from './article.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Article, articleSchema } from './entities/article.schema';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { userSchema } from 'src/users/entities/user.schema';
-import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [

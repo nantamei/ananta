@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Request, UnauthorizedException, Put, Delete, Param, UseGuards} from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
-import { Iarticle } from './entities/article.interface';
 import { AuthGuard } from 'src/users/users.guard';
 import { UpdateArticleDto } from './dto/update-article.dto';
 
@@ -36,9 +35,6 @@ export class ArticleController {
   async updateArticle(@Request() req, @Param('id') dataUpdate: string, @Body() updateArticleDto: UpdateArticleDto): Promise<any[]> {
     const user = req.user
     const updatedArticle = await this.articleService.updateDataArticle(user, dataUpdate, updateArticleDto);
-    if (!user) {
-      throw new UnauthorizedException('User not authorized to update data');
-    }
     return updatedArticle;
   }
 

@@ -7,7 +7,17 @@ import { JwtService } from '@nestjs/jwt';
 import { Model } from 'mongoose'
 
 import * as bcrypt from 'bcryptjs'
-import { User } from './entities/user.entity';
+
+
+class regspound {
+  token: { accessToken: string, refreshToken : string}
+  user: { email: string, name : string}
+}
+
+class logspound {
+  token: { accessToken: string, refreshToken : string}
+  user: { email: string, name : string}
+}
 
 
 @Injectable()
@@ -18,20 +28,16 @@ export class UsersService {
     private jwtService: JwtService
   ) {}
 
-  async register(registerUserDto: RegisterUserDto): Promise <{ token: { accessToken: string, refreshToken : string}, user: { email: string, name : string}}>{
+  async register(registerUserDto: RegisterUserDto): Promise < regspound >{
    const {name, email, password} = registerUserDto;
-
    const regis = await this.usermodel.findOne({email})
-
    if(!regis){
     const hashedpassword = await bcrypt.hash(password,10)
-
     const users = await this.usermodel.create({
       name,
       email,
       password: hashedpassword
     });
-
     const token = {
       accessToken: this.jwtService.sign({id: users._id}),
       refreshToken: this.jwtService.sign({id: users._id})
@@ -46,11 +52,9 @@ export class UsersService {
    }
   }
 
-  async login(loginUserDto:loginUserDto): Promise <{ token: { accessToken: string, refreshToken : string}, user: { email: string, name : string}}>{
+  async login(loginUserDto:loginUserDto): Promise < logspound >{
     const {email, password} = loginUserDto
-
     const users = await this.usermodel.findOne({email})
-
     if(!users){
     throw new UnauthorizedException('invalid email or password')
     }
@@ -58,7 +62,6 @@ export class UsersService {
     if(!isPasswordMached){
       throw new UnauthorizedException('invalid email or password')
     }
-    
     const token = {
       accessToken: this.jwtService.sign({id: users._id}),
       refreshToken: this.jwtService.sign({id: users._id})

@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { timeStamp } from "console";
 import { ObjectId, Types } from 'mongoose'
 
 @Schema({
@@ -7,9 +6,6 @@ import { ObjectId, Types } from 'mongoose'
 })
 
 export class Article{
-
-    // @Prop()
-    // _id: Types.ObjectId
 
     @Prop()
     title: string
